@@ -20,8 +20,20 @@ function envoi_mail($from_name, $from_mail, $subject, $message){
     );
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = "aldofoch@gmail.com";
-    $mail->Password = "aexczxfqwdmryrnt";
+    
+    // SÉCURITÉ: Utiliser des variables d'environnement pour les credentials
+    // Pour configurer dans Replit: Outils > Secrets > Ajouter un nouveau secret
+    // Secrets requis:
+    // - SMTP_USERNAME: Votre adresse Gmail
+    // - SMTP_PASSWORD: Votre mot de passe d'application Gmail
+    $mail->Username = getenv('SMTP_USERNAME') ?: '';
+    $mail->Password = getenv('SMTP_PASSWORD') ?: '';
+    
+    // Vérification que les credentials sont configurés
+    if (empty($mail->Username) || empty($mail->Password)) {
+        return 'Erreur: Les identifiants SMTP ne sont pas configurés. Veuillez ajouter SMTP_USERNAME et SMTP_PASSWORD dans les Secrets Replit.';
+    }
+    
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     $mail->Port = 465;
 
