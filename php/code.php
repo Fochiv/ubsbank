@@ -4,20 +4,27 @@ require_once("functions.php");
 
 if(isset($_POST['send'])){
     if(!empty($_POST['code'])){
-        $code = trim($_POST['code']);
+        $code = $_POST['code'];
         
-        // Enlever les tirets si présents (pour la recherche)
-        $code_clean = str_replace('-', '', $code);
+        // Nettoyage complet: enlever tous les espaces, tirets, et caractères invisibles
+        $code_clean = preg_replace('/[^0-9]/', '', trim($code));
         
-        $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
-        $req->execute(['cs' => $code_clean]);
-        $user = $req->rowCount();
+        // Debugging: afficher l'identifiant nettoyé (à supprimer après test)
+        // echo "DEBUG: Code saisi = '" . $code . "' | Code nettoyé = '" . $code_clean . "' | Longueur = " . strlen($code_clean) . "<br>";
         
-        if($user == 1){
-            header("location:info.php?code=".$code_clean);
-            exit;
+        if(empty($code_clean)){
+            $erreur = 'L\'identifiant saisi n\'est pas valide. Veuillez entrer uniquement des chiffres.';
         } else {
-            $erreur = 'Cet identifiant de transaction ne correspond à aucune transaction! Veuillez contacter votre agence ou votre banquier.';
+            $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+            $req->execute(['cs' => $code_clean]);
+            $user = $req->rowCount();
+            
+            if($user == 1){
+                header("location:info.php?code=".$code_clean);
+                exit;
+            } else {
+                $erreur = 'Cet identifiant de transaction ne correspond à aucune transaction! Veuillez contacter votre agence ou votre banquier.';
+            }
         }
     } else {
         $erreur = 'Veuillez entrer l\'identifiant de la transaction à consulter';

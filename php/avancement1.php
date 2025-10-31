@@ -4,18 +4,24 @@ require_once("functions.php");
 
 if(isset($_POST['send'])){
     if(!empty($_POST['code'])){
-        $code = trim($_POST['code']);
-        $code_clean = str_replace('-', '', $code);
+        $code = $_POST['code'];
         
-        $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
-        $req->execute(['cs' => $code_clean]);
-        $user = $req->rowCount();
+        // Nettoyage complet: enlever tous les espaces, tirets, et caractères invisibles
+        $code_clean = preg_replace('/[^0-9]/', '', trim($code));
         
-        if($user == 1){
-            header("location:avancement.php?code=".$code_clean);
-            exit;
+        if(empty($code_clean)){
+            $erreur = 'L\'identifiant saisi n\'est pas valide. Veuillez entrer uniquement des chiffres.';
         } else {
-            $erreur = 'Cet identifiant de transaction n\'existe pas dans la base de données. Veuillez vérifier et réessayer.';
+            $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+            $req->execute(['cs' => $code_clean]);
+            $user = $req->rowCount();
+            
+            if($user == 1){
+                header("location:avancement.php?code=".$code_clean);
+                exit;
+            } else {
+                $erreur = 'Cet identifiant de transaction n\'existe pas dans la base de données. Veuillez vérifier et réessayer.';
+            }
         }
     } else {
         $erreur = 'Veuillez entrer l\'identifiant de la transaction pour modifier son état d\'avancement';
