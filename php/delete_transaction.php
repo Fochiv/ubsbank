@@ -13,7 +13,7 @@ $identifiant = $_GET['id'];
 
 try {
     // Supprimer la transaction
-    $req = $bdd->prepare('DELETE FROM all_for_one WHERE code_swift = :id');
+    $req = $bdd->prepare('DELETE FROM all_for_one WHERE identification_transaction = :id');
     $req->execute(['id' => $identifiant]);
     
     if($req->rowCount() > 0) {

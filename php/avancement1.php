@@ -12,7 +12,7 @@ if(isset($_POST['send'])){
         if(empty($code_clean)){
             $erreur = 'L\'identifiant saisi n\'est pas valide. Veuillez entrer uniquement des chiffres.';
         } else {
-            $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+            $req = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
             $req->execute(['cs' => $code_clean]);
             $user = $req->rowCount();
             

@@ -9,7 +9,7 @@ if(!isset($_GET['code']) || empty($_GET['code'])){
 
 $code = $_GET['code'];
 
-$req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+$req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
 $req2->execute(['cs' => $code]);
 $rep2 = $req2->fetch();
 
@@ -21,11 +21,11 @@ if(!$rep2){
 if(isset($_POST['send'])){
     if(!empty($_POST['etat'])){
         $etat = $_POST['etat'];
-        $req = $bdd->prepare('UPDATE all_for_one SET etat = :et WHERE code_swift = :cs');
+        $req = $bdd->prepare('UPDATE all_for_one SET etat = :et WHERE identification_transaction = :cs');
         $req->execute(['et' => $etat, 'cs' => $code]);
         $succes = 'État de la transaction mis à jour avec succès!';
         
-        $req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+        $req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
         $req2->execute(['cs' => $code]);
         $rep2 = $req2->fetch();
     } else {
@@ -103,7 +103,7 @@ if(isset($_POST['send'])){
             <div>
                 <h1 class="page-title">Modifier l'État de la Transaction</h1>
                 <p style="color: var(--text-secondary); margin-top: 0.5rem;">
-                    Modifiez la progression de la transaction #<?php echo formaterIdentifiant($rep2['code_swift']); ?>
+                    Modifiez la progression de la transaction #<?php echo formaterIdentifiant($rep2['identification_transaction']); ?>
                 </p>
             </div>
             <div class="top-bar-actions">
@@ -135,7 +135,7 @@ if(isset($_POST['send'])){
                         <i class="bi bi-hash"></i> Identifiant de la Transaction
                     </p>
                     <p style="font-weight: 700; font-size: 1.1rem; font-family: monospace; color: var(--accent-primary);">
-                        <?php echo formaterIdentifiant($rep2['code_swift']); ?>
+                        <?php echo formaterIdentifiant($rep2['identification_transaction']); ?>
                     </p>
                 </div>
                 

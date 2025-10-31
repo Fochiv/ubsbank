@@ -24,7 +24,7 @@ try {
         [17, 'TOHM', 'PALMER', 'Etats unis', '69076', '0696485333', 'ubs bank', 'USD', '936000', '2024-08-01', '00:16:31', 'MUJINGA', 'WA MWENZE', 'congo rdc', '@gmail.com', '05100', '00010', '1005614350160', 'PSSTFRPPSCE', '47260351', '10', 'Pour lutter contre le blanchiment d\'argent la banque UBS a decider de proceder a la verification de ce virement donc vous devriez contacter le numero ci dessous pour etablir le certificat de conformite NUMERO +33751055687']
     ];
     
-    $stmt = $bdd->prepare("INSERT INTO all_for_one (id, nom_ex, prenom_ex, pays_ex, numero_aba_ex, numero_compte_ex, nom_banque_ex, devise_compte_ex, montant, date, heure, nom_de, prenom_de, pays_de, email_de, code_banque_de, code_guichet_de, numero_compte_de, code_bic_de, code_swift, etat, important) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $bdd->prepare("INSERT INTO all_for_one (id, nom_ex, prenom_ex, pays_ex, numero_aba_ex, numero_compte_ex, nom_banque_ex, devise_compte_ex, montant, date, heure, nom_de, prenom_de, pays_de, email_de, code_banque_de, code_guichet_de, numero_compte_de, code_bic_de, identification_transaction, etat, important) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     
     foreach ($data as $row) {
         $stmt->execute($row);

@@ -9,7 +9,7 @@ if(!isset($_GET['id']) || empty($_GET['id'])){
 
 $code = $_GET['id'];
 
-$req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+$req = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
 $req->execute(['cs' => $code]);
 $transaction = $req->fetch();
 
@@ -69,7 +69,7 @@ if(!$transaction){
             <div>
                 <h1 class="page-title">Détails de la Transaction</h1>
                 <p style="color: var(--text-secondary); margin-top: 0.5rem;">
-                    Identifiant: <strong style="font-family: monospace;"><?php echo formaterIdentifiant($transaction['code_swift']); ?></strong>
+                    Identifiant: <strong style="font-family: monospace;"><?php echo formaterIdentifiant($transaction['identification_transaction']); ?></strong>
                 </p>
             </div>
             <div class="top-bar-actions">

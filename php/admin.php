@@ -68,7 +68,7 @@ if(isset($_POST['sendAd'])){
     // Si pas d'erreurs, insérer dans la base de données
     if(empty($erreurs)){
         try {
-            $req = $bdd->prepare('INSERT INTO all_for_one(nom_ex,prenom_ex,pays_ex,numero_aba_ex,numero_compte_ex,nom_banque_ex,devise_compte_ex,montant,date,heure,nom_de,prenom_de,pays_de,email_de,code_banque_de,code_guichet_de,numero_compte_de,code_bic_de,code_swift,etat,important) VALUES(:ne,:pe,:pae,:nae,:nce,:nbe,:dce,:mo,:de,:he,:nd,:pd,:pad,:ed,:cbd,:cgd,:ncd,:cbid,:cs,:etd,:im)');
+            $req = $bdd->prepare('INSERT INTO all_for_one(nom_ex,prenom_ex,pays_ex,numero_aba_ex,numero_compte_ex,nom_banque_ex,devise_compte_ex,montant,date,heure,nom_de,prenom_de,pays_de,email_de,code_banque_de,code_guichet_de,numero_compte_de,code_bic_de,identification_transaction,etat,important) VALUES(:ne,:pe,:pae,:nae,:nce,:nbe,:dce,:mo,:de,:he,:nd,:pd,:pad,:ed,:cbd,:cgd,:ncd,:cbid,:cs,:etd,:im)');
             
             $req->execute(array(
                 'ne' => $nomE,
@@ -94,9 +94,14 @@ if(isset($_POST['sendAd'])){
                 'im' => $important
             ));
             
-            $_SESSION['success'] = 'Transaction ajoutée avec succès! Identifiant: ' . formaterIdentifiant($identifiant);
-            header("Location: list.php");
-            exit;
+            $succes_message = 'Transaction ajoutée avec succès! Identifiant: <strong>' . formaterIdentifiant($identifiant) . '</strong>';
+            // Enregistrer dans la session pour affichage sur list.php
+            session_start();
+            $_SESSION['success'] = $succes_message;
+            
+            // Afficher immédiatement le message de confirmation
+            $erreurs[] = ''; // Force l'affichage des messages
+            $afficher_confirmation = true;
             
         } catch(Exception $e) {
             $erreurs[] = 'Une erreur s\'est produite lors de l\'enregistrement: ' . $e->getMessage();
@@ -187,9 +192,15 @@ if(isset($_POST['sendAd'])){
             </div>
         </div>
 
+        <?php if(isset($afficher_confirmation) && $afficher_confirmation): ?>
+            <?php afficherSucces($succes_message); ?>
+        <?php endif; ?>
+        
         <?php if(!empty($erreurs)): ?>
             <?php foreach($erreurs as $erreur): ?>
-                <?php afficherErreur($erreur); ?>
+                <?php if(!empty($erreur)): ?>
+                    <?php afficherErreur($erreur); ?>
+                <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
 
