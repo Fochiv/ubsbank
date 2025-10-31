@@ -1,6 +1,6 @@
-# Base de données SQLite
-php/database/*.db
+# Base de données SQLite - IMPORTANT: ubsbank.db doit être committé avec les données
 php/database/*.db-journal
+php/database/*-backup.db
 
 # Logs PHP
 *.log
