@@ -1,390 +1,231 @@
 <?php
 require_once("connect.php");
-//require_once("avancement1.php");
-if(isset($_GET['code'])){
-  $code=$_GET['code'];
+require_once("functions.php");
 
-?>
-<?php
-    function error($msg){
-        ?>
-            <div class="error">
-                <p class="p-error"><?php echo $msg ?></p>
-            </div>
-        <?php
+if(!isset($_GET['code']) || empty($_GET['code'])){
+    header("location:condition.php");
+    exit;
+}
+
+$code = $_GET['code'];
+
+$req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+$req2->execute(['cs' => $code]);
+$rep2 = $req2->fetch();
+
+if(!$rep2){
+    header("location:condition.php");
+    exit;
+}
+
+if(isset($_POST['send'])){
+    if(!empty($_POST['condition'])){
+        $condition = $_POST['condition'];
+        $req = $bdd->prepare('UPDATE all_for_one SET important = :im WHERE code_swift = :cs');
+        $req->execute(['im' => $condition, 'cs' => $code]);
+        $succes = 'Conditions de la transaction mises à jour avec succès!';
+        
+        $req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+        $req2->execute(['cs' => $code]);
+        $rep2 = $req2->fetch();
+    } else {
+        $erreur = 'Veuillez entrer la nouvelle condition';
     }
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>modifier condition</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <!-- Favicons -->
-  <link href="../assets/img/favicon.png" rel="icon">
-  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link href="../assets/css/style.css" rel="stylesheet">
-  
-
-  <!-- =======================================================
-  * Template Name: BizLand
-  * Updated: Sep 18 2023 with Bootstrap v5.3.2
-  * Template URL: https://bootstrapmade.com/bizland-bootstrap-business-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBS Bank | Modifier les Conditions</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/css/admin-theme.css" rel="stylesheet">
 </head>
 
 <body>
-
-  <style>
-
-*{
-    margin:0;
-    padding:0;
-    
-}
-
-
-body{
-    background: url(../assets/img/hero-bg.jpg);
-    /* background-size: cover; */
-    background-position: center;
-}
-.wrapper{
-    width:420px;
-    /* position: absolute;
-    top:10%;
-    left:32%; */
-    background:transparent; 
-    /* color: #fff; */
-    border: 2px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px); 
-    box-shadow: 0 0 10px rgba(0.9,0.9,0.9,1);
-    border-radius: 10px;
-    /* padding:30px 40px; */
-    margin-left: 32%;
-    
-
-}
-.w2{
-    width:400px;
-    border: 2px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px); 
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    border-radius: 10px;
-    background:transparent;
-    margin: 7px;
-    padding: 10px;
-
-}
-.wrapper  h1,h2,h3,h4{
-    text-align: center;
-}
-.wrapper .w2 ul li{
-    list-style-type: none;
-}
-section{
-  backdrop-filter: blur(10px); 
-}
-section h2,h5{
-  text-align:center;
-}
-.input-box textarea{
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border:none;
-    outline:none;
-    border:2px solid rgba(255,255,255,0.2);
-    border-radius: 40px;
-    font-size: 16px;
-    color: #fff ;
-    padding:20px 45px 20px 20px;
-    text-align: center;
-}
-.wrapper input[type="submit"]{
-    width:95%;
-    height:45px;
-    background-color: #fff;
-    border:none;
-    outline:none;
-    border-radius: 40px;
-    margin:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
-    cursor:pointer;
-    font-size: 16px;
-    color:#333;
-    font-weight: 600;
-}
-.error{
-    position: absolute;
-    bottom:0px;
-    width:95%;
-    height:auto;
-    padding:10px;
-    border: 2px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-
-}
-.error .p-error{
-    text-align: center;
-    font-size: 26px;
-    color: red;
-}
-@media screen and (min-width:340px) and (max-width:360px) {
-  .wrapper{
-    width:100%;
-    position: static;
-    backdrop-filter: blur(30px); 
-    margin:0;
-  }
-}
-@media screen and (min-width:360px) and (max-width:380px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    backdrop-filter: blur(30px); 
-    margin:0;
-  }
-}
-@media screen and (min-width:380px) and (max-width:400px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    backdrop-filter: blur(30px); 
-    margin:0;
-  }
-}
-@media screen and (min-width:400px) and (max-width:420px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    backdrop-filter: blur(30px); 
-    margin:0;
-  }
-}
-@media screen and (min-width:420px) and (max-width:440px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:440px) and (max-width:460px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:460px) and (max-width:480px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:480px) and (max-width:500px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:500px) and (max-width:520px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:520px) and (max-width:540px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:540px) and (max-width:560px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:560px) and (max-width:580px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:580px) and (max-width:600px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:600px) and (max-width:620px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:620px) and (max-width:660px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-}
-@media screen and (min-width:660px) and (max-width:720px) {
-    .wrapper{
-    width:100%;
-    position: static;
-    margin:0;
-  }
-} 
-
-<?php
-
-$req2=$bdd->query('SELECT * FROM all_for_one WHERE code_swift='.$code.'');
-$rep2=$req2->fetch();
-
- 
-?>
-
-
-
-  </style>
-
-  <!-- ======= Top Bar ======= -->
-  <section id="topbar" class="d-flex align-items-center">
-    <div class="container d-flex justify-content-center justify-content-md-between">
-      <div class="contact-info d-flex align-items-center">
-        <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">ubsbank045@gmail.com</a></i>
-        <i class="bi bi-phone d-flex align-items-center ms-4"><span>+237 696485333</span></i>
-      </div>
-      <div class="social-links d-none d-md-flex align-items-center">
-        <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-        <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======= Header ======= -->
-  <header id="header" class="d-flex align-items-center">
-    <div class="container d-flex align-items-center justify-content-between">
-
-      <h1 class="logo"><a href="../html/index.html">UBS Bank<span></span></a></h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt=""></a>-->
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto active" href="../index.html">Accueil</a></li>
-          <li><a class="nav-link scrollto " href="../php/code.php">Identifiant de la transaction</a></li>
-          <li><a class="nav-link scrollto " href="../php/admin.php">Retour à l'administration</a></li>
-         
-          <li id="google_translate_element"></li>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">U</div>
+            <div class="sidebar-title">UBS Bank</div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a href="../index.html" class="sidebar-menu-link">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Accueil</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="admin.php" class="sidebar-menu-link">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>Nouvelle Transaction</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="list.php" class="sidebar-menu-link">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Liste des Transactions</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="code.php" class="sidebar-menu-link">
+                    <i class="bi bi-search"></i>
+                    <span>Consulter Transaction</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="avancement1.php" class="sidebar-menu-link">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <span>Modifier État</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="condition.php" class="sidebar-menu-link active">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Modifier Condition</span>
+                </a>
+            </li>
         </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav><!-- .navbar -->
-
     </div>
-  </header><!-- End Header -->
- 
 
-    
-                <div class="wrapper">
-                    <h2> L'etat de cette transaction est a <?php echo $rep2['etat'];?> </h2>
-                    <div class=" w2">
-                        <ul>
-                            <li><b style="blue">Code swift:<?php echo $rep2['code_swift'];?></b></li>
-                            <li>Montant transfere:<?php echo $rep2['montant'];?></li>
-                            <li>Date de transfert:<?php echo $rep2['date'];?></li>
-                            <li>Heure de transfert:<?php echo $rep2['heure'];?></li>
-                        </ul>
-                        <form action="" method="post">
-                        <h1>Entrez la nouvelle condition</h1>
-                        <div class="input-box">
-                            <textarea placeholder="nouvelle condition" name="condition" ></textarea>
-                        </div>
-                        <input type="submit" name="send" value="modifier" class="btn">
-                    </form>
+    <!-- Contenu Principal -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div>
+                <h1 class="page-title">Modifier les Conditions</h1>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                    Modifiez les conditions de la transaction #<?php echo formaterIdentifiant($rep2['code_swift']); ?>
+                </p>
+            </div>
+            <div class="top-bar-actions">
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="bi bi-sun-fill" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <?php if(isset($erreur)): ?>
+            <?php afficherErreur($erreur); ?>
+        <?php endif; ?>
+
+        <?php if(isset($succes)): ?>
+            <?php afficherSucces($succes); ?>
+        <?php endif; ?>
+
+        <!-- Informations de la Transaction -->
+        <div class="card fade-in" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="bi bi-info-circle-fill"></i> Informations de la Transaction
+                </h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; padding: 1rem;">
+                <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 10px;">
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <i class="bi bi-hash"></i> Identifiant de la Transaction
+                    </p>
+                    <p style="font-weight: 700; font-size: 1.1rem; font-family: monospace; color: var(--accent-primary);">
+                        <?php echo formaterIdentifiant($rep2['code_swift']); ?>
+                    </p>
+                </div>
+                
+                <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 10px;">
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <i class="bi bi-cash-coin"></i> Montant Transféré
+                    </p>
+                    <p style="font-weight: 700; font-size: 1.1rem; color: var(--accent-success);">
+                        <?php echo formaterMontant($rep2['montant']); ?> <?php echo securiser($rep2['devise_compte_ex']); ?>
+                    </p>
+                </div>
+                
+                <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 10px;">
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <i class="bi bi-calendar-event"></i> Date de Transfert
+                    </p>
+                    <p style="font-weight: 700; font-size: 1.1rem;">
+                        <?php echo date('d/m/Y', strtotime($rep2['date'])); ?>
+                    </p>
+                </div>
+                
+                <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 10px;">
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <i class="bi bi-percent"></i> État d'Avancement
+                    </p>
+                    <p style="font-weight: 700; font-size: 1.1rem;">
+                        <?php echo getBadgeEtat($rep2['etat']); ?>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire de Modification -->
+        <div class="card fade-in" style="max-width: 800px; margin: 0 auto;">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Modifier les Conditions Importantes
+                </h2>
+            </div>
+            
+            <div style="padding: 0.5rem;">
+                <?php if(!empty($rep2['important'])): ?>
+                <div style="padding: 1.5rem; background: rgba(239, 68, 68, 0.05); border-radius: 10px; border: 2px solid var(--accent-danger); margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1rem; color: var(--accent-danger); margin-bottom: 1rem;">
+                        <i class="bi bi-info-circle-fill"></i> Conditions Actuelles:
+                    </h3>
+                    <div style="color: var(--text-primary); line-height: 1.8; white-space: pre-wrap;">
+                        <?php echo nl2br(securiser($rep2['important'])); ?>
                     </div>
-                <?php
-            if(isset($_POST['send'])){
-                $condition=$_POST['condition'];
-                if(!empty($condition)){
-                    $req=$bdd->prepare('UPDATE all_for_one SET important=:im WHERE code_swift='.$code.'');
-                    $req->execute(array(
-                        'im'=>$condition
-                    ));
-                    error('modification terminee!');
-
-                }
-            }
-
-?>
+                </div>
+                <?php endif; ?>
+                
+                <form action="" method="post">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-file-text"></i> Nouvelles Conditions *
+                        </label>
+                        <textarea 
+                            name="condition" 
+                            class="form-control" 
+                            placeholder="Entrez les nouvelles conditions importantes pour cette transaction..."
+                            rows="8"
+                            required
+                            style="font-family: inherit; resize: vertical;"><?php echo isset($_POST['condition']) ? securiser($_POST['condition']) : securiser($rep2['important']); ?></textarea>
+                        <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                            <i class="bi bi-info-circle"></i> Ces conditions seront affichées au client lors de la consultation de la transaction
+                        </small>
+                    </div>
                     
-                       
-           
- 
- 
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" name="send" class="btn btn-primary" style="flex: 1;">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Mettre à Jour
+                        </button>
+                        <a href="condition.php" class="btn btn-sm" style="background: var(--bg-secondary); color: var(--text-primary); flex: 1; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-arrow-left"></i> Retour
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-  <div id="preloader"></div>
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+        <div style="text-align: center; margin-top: 2rem; padding-bottom: 2rem;">
+            <a href="list.php" class="btn btn-sm" style="background: var(--bg-secondary); color: var(--text-primary);">
+                <i class="bi bi-list-ul"></i> Voir toutes les transactions
+            </a>
+        </div>
+    </div>
 
-  <!-- Vendor JS Files -->
-  <script src="../assets/vendor/purecounter/purecounter_vanilla.js"></script>
-  <script src="../assets/vendor/aos/aos.js"></script>
-  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
-  <script src="../assets/vendor/php-email-form/validate.js"></script>
-
-  <!-- Template Main JS File -->
-  <script src="../assets/js/main.js"></script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script>
-  
-    function googleTranslateElementInit(){
-      new google.translate.TranslateElement(
-        {pageLanguage:'fr'},
-        'google_translate_element'
-      );
-    }
-  </script>
-
+    <!-- JavaScript -->
+    <script src="../assets/js/theme.js"></script>
 </body>
-
 </html>
-<?php
-}else header("location:code.php");

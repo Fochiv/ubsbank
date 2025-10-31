@@ -269,7 +269,7 @@ if(isset($_POST['sendAd'])){
                     
                     <div class="form-group">
                         <label class="form-label">Adresse Email *</label>
-                        <input type="email" name="email" class="form-control" placeholder="Ex: contact@example.com" value="<?php echo isset($_POST['email']) ? securiser($_POST['email']) : ''; ?>" required>
+                        <input type="email" name="email" class="form-control" placeholder="Ex: aldofoch@gmail.com" value="<?php echo isset($_POST['email']) ? securiser($_POST['email']) : ''; ?>" required>
                     </div>
                     
                     <div class="form-group">
