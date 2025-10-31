@@ -5,7 +5,7 @@
 
 /**
  * Génère un identifiant de transaction unique de 12 caractères
- * Format: XXX-XXX-XXX-X (3-3-3-3 avec tirets pour lisibilité)
+ * Format: XXX-XXX-XXX-XXX (12 chiffres avec tirets pour lisibilité)
  * @param PDO $bdd Connection à la base de données
  * @return string Identifiant unique
  */
@@ -31,14 +31,21 @@ function genererIdentifiantTransaction($bdd) {
 /**
  * Formate un identifiant pour l'affichage (avec tirets)
  * @param string $identifiant Identifiant brut
- * @return string Identifiant formaté (XXX-XXX-XXX-X)
+ * @return string Identifiant formaté
+ * Format: XXX-XXX-XXX-XXX (12 chiffres) ou XXX-XXX-XX (8 chiffres - ancien format)
  */
 function formaterIdentifiant($identifiant) {
+    $identifiant = str_replace('-', '', $identifiant);
+    
     if (strlen($identifiant) === 12) {
         return substr($identifiant, 0, 3) . '-' . 
                substr($identifiant, 3, 3) . '-' . 
                substr($identifiant, 6, 3) . '-' . 
                substr($identifiant, 9, 3);
+    } elseif (strlen($identifiant) === 8) {
+        return substr($identifiant, 0, 3) . '-' . 
+               substr($identifiant, 3, 3) . '-' . 
+               substr($identifiant, 6, 2);
     }
     return $identifiant;
 }

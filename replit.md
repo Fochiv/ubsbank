@@ -72,8 +72,13 @@ Configuration rapide:
 - **Notes**: messages et conditions importantes
 
 ### Identifiants de Transaction
-Format: 12 chiffres (affichés avec tirets XXX-XXX-XXX-X)
-Exemple: 257-016-34 → utilisé comme code SWIFT
+**Nouveaux identifiants**: 12 chiffres (format: XXX-XXX-XXX-XXX)
+- Exemple: 123-456-789-012
+
+**Anciens identifiants**: 8 chiffres (format: XXX-XXX-XX) 
+- Exemple: 257-016-34
+
+Les deux formats sont supportés pour assurer la compatibilité avec les transactions existantes. Les identifiants sont stockés sans tirets dans la base de données et formatés automatiquement pour l'affichage.
 
 ## 🔐 Sécurité
 
@@ -94,10 +99,13 @@ Exemple: 257-016-34 → utilisé comme code SWIFT
 ### Changements Récents (31 Oct 2025)
 - Configuration initiale pour Replit
 - Migration de SQLite pour l'environnement de développement
-- Création de connect_mysql.php pour compatibilité Wampserver
-- Import des 17 transactions existantes
+- Création de connect_mysql.php pour compatibilité Wampserver (nom BD: ubsbank)
+- Import des 17 transactions existantes (format 8 chiffres)
 - Configuration du serveur PHP sur port 5000
-- Documentation du projet
+- Support des deux formats d'identifiants (8 et 12 chiffres)
+- Ajout de notification verte élégante lors de la copie d'identifiant
+- Correction des fonctions de recherche pour supporter les anciens identifiants
+- Documentation complète du projet et guide Wampserver
 
 ### Compatibilité
 - PHP 8.2+ (compatible avec PHP 7.3+)

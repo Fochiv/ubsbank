@@ -326,14 +326,80 @@ foreach($transactions as $trans) {
             });
         });
         
-        // Fonction pour copier dans le presse-papiers
+        // Fonction pour copier dans le presse-papiers avec notification
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(function() {
-                alert('Identifiant copié : ' + text);
+                showCopyNotification(text);
             }).catch(function(err) {
                 console.error('Erreur lors de la copie : ', err);
+                alert('Erreur lors de la copie. Veuillez réessayer.');
             });
         }
+        
+        // Fonction pour afficher la notification de copie
+        function showCopyNotification(text) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                font-weight: 600;
+                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+                z-index: 10000;
+                animation: slideDown 0.3s ease-out;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            `;
+            
+            notification.innerHTML = `
+                <i class="bi bi-check-circle-fill" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong>Identifiant copié!</strong>
+                    <div style="font-size: 0.9rem; font-family: monospace; margin-top: 0.25rem;">${text}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 2500);
+        }
+        
+        // Ajouter les animations CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            @keyframes slideUp {
+                from {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
         
         // Données des transactions (générées depuis PHP)
         const transactionsData = <?php echo json_encode($transactions); ?>;
@@ -435,8 +501,11 @@ foreach($transactions as $trans) {
         
         // Fonction pour formater l'identifiant
         function formatIdentifiant(id) {
+            id = id.replace(/-/g, '');
             if (id.length === 12) {
                 return id.substr(0, 3) + '-' + id.substr(3, 3) + '-' + id.substr(6, 3) + '-' + id.substr(9, 3);
+            } else if (id.length === 8) {
+                return id.substr(0, 3) + '-' + id.substr(3, 3) + '-' + id.substr(6, 2);
             }
             return id;
         }
