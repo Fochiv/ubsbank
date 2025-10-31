@@ -35,17 +35,19 @@ Application web PHP pour la gestion des transactions bancaires UBS. Système com
 - La base de données SQLite est committée dans le repository pour faciliter le déploiement
 
 ### Sur Wampserver (Production)
-**📘 Consultez le fichier WAMPSERVER.md pour le guide complet**
+**📘 Consultez le fichier INSTALLATION_WAMPSERVER.md pour le guide complet**
 
 Configuration rapide:
 1. Créer une base de données MySQL nommée `ubsbank`
-2. Importer le fichier `php/all_for_one.sql`
-3. Renommer `php/connect_mysql.php` en `php/connect.php` (ou modifier connect.php)
+2. Importer le fichier `php/ubsbank_mysql.sql` (nouveau fichier avec identification_transaction)
+3. Modifier `php/connect.php` pour activer MySQL (décommenter les lignes 4-9, commenter lignes 11-63)
 4. Les identifiants MySQL sont déjà configurés:
    - Host: localhost
    - Database: ubsbank
    - User: root
    - Password: (vide)
+
+⚠️ **Note**: N'utilisez plus `php/all_for_one.sql` (ancien fichier avec code_swift)
 
 ## 🔧 Fonctionnalités
 
@@ -68,8 +70,10 @@ Configuration rapide:
 - **Informations expéditeur**: nom, prénom, pays, numéros bancaires
 - **Informations destinataire**: nom, prénom, pays, email, codes bancaires
 - **Transaction**: montant, devise, date, heure
-- **Suivi**: état (progression), code SWIFT (identifiant unique)
+- **Suivi**: état (progression), identification_transaction (identifiant unique)
 - **Notes**: messages et conditions importantes
+
+⚠️ **Note importante**: La colonne s'appelle maintenant `identification_transaction` au lieu de `code_swift`
 
 ### Identifiants de Transaction
 **Nouveaux identifiants**: 12 chiffres (format: XXX-XXX-XXX-XXX)
@@ -78,7 +82,7 @@ Configuration rapide:
 **Anciens identifiants**: 8 chiffres (format: XXX-XXX-XX) 
 - Exemple: 257-016-34
 
-Les deux formats sont supportés pour assurer la compatibilité avec les transactions existantes. Les identifiants sont stockés sans tirets dans la base de données et formatés automatiquement pour l'affichage.
+Les deux formats sont supportés. Les identifiants sont stockés sans tirets dans la base de données et formatés automatiquement pour l'affichage. Le système nettoie automatiquement tous les espaces, tirets et caractères spéciaux lors de la recherche.
 
 ## 🔐 Sécurité
 
@@ -97,15 +101,33 @@ Les deux formats sont supportés pour assurer la compatibilité avec les transac
 ## 📝 Notes de Développement
 
 ### Changements Récents (31 Oct 2025)
-- Configuration initiale pour Replit
-- Migration de SQLite pour l'environnement de développement
-- Création de connect_mysql.php pour compatibilité Wampserver (nom BD: ubsbank)
+
+#### Configuration initiale
+- Migration vers Replit avec SQLite pour l'environnement de développement
+- Compatibilité Wampserver via MySQL (nom BD: ubsbank)
 - Import des 17 transactions existantes (format 8 chiffres)
 - Configuration du serveur PHP sur port 5000
+
+#### Corrections de bugs (31 Oct 2025 - après-midi)
+- **BUG RÉSOLU**: Erreur "Cet identifiant ne correspond à aucune transaction"
+  - Cause: Espaces invisibles lors du copier-coller
+  - Solution: Nettoyage avancé avec `preg_replace('/[^0-9]/', '', trim($code))`
+  - Tous les espaces, tirets et caractères spéciaux sont maintenant supprimés automatiquement
+
+- **MIGRATION**: Renommage de la colonne `code_swift` → `identification_transaction`
+  - Migration automatique dans connect.php pour bases existantes
+  - Nouveau fichier SQL: `php/ubsbank_mysql.sql` pour Wampserver
+  - Tous les fichiers PHP mis à jour (15+ fichiers)
+
+- **AMÉLIORATION**: Message de confirmation après insertion
+  - Affichage immédiat de l'identifiant généré dans admin.php
+  - Message persistant dans list.php via sessions
+
+#### Documentation
+- Création de INSTALLATION_WAMPSERVER.md avec guide complet
+- Page de diagnostic ajoutée: php/diagnostic.php
 - Support des deux formats d'identifiants (8 et 12 chiffres)
-- Ajout de notification verte élégante lors de la copie d'identifiant
-- Correction des fonctions de recherche pour supporter les anciens identifiants
-- Documentation complète du projet et guide Wampserver
+- Notification élégante lors de la copie d'identifiant
 
 ### Compatibilité
 - PHP 8.2+ (compatible avec PHP 7.3+)
