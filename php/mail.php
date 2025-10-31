@@ -256,8 +256,8 @@ body{
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto active" href="../index.html">Accueil</a></li>
-          <li><a class="nav-link scrollto " href="code.php">Code-swift</a></li>
-          <li><a class="nav-link scrollto " href="adminxyzxyz.php">Retour a l'admin</a></li>
+          <li><a class="nav-link scrollto " href="code.php">Identifiant de la transaction</a></li>
+          <li><a class="nav-link scrollto " href="admin.php">Retour à l'administration</a></li>
          
           <li id="google_translate_element"></li>
         </ul>

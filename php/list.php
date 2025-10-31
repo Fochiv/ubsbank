@@ -272,5 +272,74 @@ foreach($transactions as $trans) {
 
     <!-- JavaScript -->
     <script src="../assets/js/theme.js"></script>
+    <script>
+        // Fonction de recherche dans le tableau
+        const searchInput = document.querySelector('.search-input');
+        const tableRows = document.querySelectorAll('.modern-table tbody tr');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Variables pour le modal de suppression
+        let deleteIdentifiant = '';
+        
+        // Fonction pour afficher le modal de confirmation
+        function confirmDelete(identifiant, nom, prenom) {
+            deleteIdentifiant = identifiant;
+            const modal = document.getElementById('delete-modal');
+            const modalText = document.getElementById('delete-modal-text');
+            
+            modalText.innerHTML = `Êtes-vous sûr de vouloir supprimer la transaction de <strong>${nom} ${prenom}</strong> ?<br><br>Identifiant: <strong style="font-family: monospace;">${formatIdentifiant(identifiant)}</strong>`;
+            
+            modal.style.display = 'flex';
+        }
+        
+        // Fonction pour fermer le modal
+        function closeModal() {
+            const modal = document.getElementById('delete-modal');
+            modal.style.display = 'none';
+            deleteIdentifiant = '';
+        }
+        
+        // Fonction pour confirmer la suppression
+        function confirmDeleteAction() {
+            if (deleteIdentifiant) {
+                window.location.href = 'delete_transaction.php?id=' + deleteIdentifiant;
+            }
+        }
+        
+        // Fonction pour formater l'identifiant
+        function formatIdentifiant(id) {
+            if (id.length === 12) {
+                return id.substr(0, 3) + '-' + id.substr(3, 3) + '-' + id.substr(6, 3) + '-' + id.substr(9, 3);
+            }
+            return id;
+        }
+        
+        // Fermer le modal en cliquant à l'extérieur
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('delete-modal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Fermer le modal avec la touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>

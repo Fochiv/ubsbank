@@ -1,165 +1,150 @@
 <?php
-    function error($msg){
-        ?>
-            <div class="error">
-                <p class="p-error"><?php echo $msg ?></p>
-            </div>
-        <?php
-    }
-?>
-<?php
 require_once("connect.php");
+require_once("functions.php");
+
 if(isset($_POST['send'])){
     if(!empty($_POST['code'])){
-        $req=$bdd->prepare('SELECT * FROM all_for_one WHERE code_swift=:cs');
-        $req->execute(array('cs'=>$_POST['code']));
-        $code=$_POST['code'];
-        $user=$req->rowCount();
-        if($user==1){
-            header("location:avancement.php?code=".$code);
-        } else error('ce code swift n\'existe pas dans la base de donnee');
-
-    }else error('veuillez entrer le code swift pour modifier l\'etat de la transaction');
+        $code = trim($_POST['code']);
+        $code_clean = str_replace('-', '', $code);
+        
+        $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+        $req->execute(['cs' => $code_clean]);
+        $user = $req->rowCount();
+        
+        if($user == 1){
+            header("location:avancement.php?code=".$code_clean);
+            exit;
+        } else {
+            $erreur = 'Cet identifiant de transaction n\'existe pas dans la base de données. Veuillez vérifier et réessayer.';
+        }
+    } else {
+        $erreur = 'Veuillez entrer l\'identifiant de la transaction pour modifier son état d\'avancement';
+    }
 }
-
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
- 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-    <title>UBS bank|Entrer le code swift</title>
-</head>
-<body>
-    <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: roboto,sans-serif;
-}
-body{
-    display:flex;
-    justify-content: center;
-    align-items:center;
-    min-height:100vh;
-    background: url(../assets/img/hero-bg.jpg);
-    background-size: cover;
-    background-position: center;
-}
-.wrapper{
-    width:420px;
-    background:transparent;
-    color: #fff;
-    border: 2px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    border-radius: 10px;
-    padding:30px 40px;
-
-}
-.wrapper h1{
-    font-size: 36px;
-    text-align: center;
-}
-.wrapper .input-box{
-    width:100%;
-    height: 50px;
-    /* background-color: salmon; */
-    margin:30px 0;
-}
-.input-box input{
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border:none;
-    outline:none;
-    border:2px solid rgba(255,255,255,0.2);
-    border-radius: 40px;
-    font-size: 16px;
-    color: #fff ;
-    padding:20px 45px 20px 20px;
-    text-align: center;
-}
-.input-box input::placeholder{
-    color:#fff;
-}
-.wrapper input[type="submit"]{
-    width:95%;
-    height:45px;
-    background-color: #fff;
-    border:none;
-    outline:none;
-    border-radius: 40px;
-    margin:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
-    cursor:pointer;
-    font-size: 16px;
-    color:#333;
-    font-weight: 600;
-   
-
-}
-.error{
-    position: absolute;
-    top:10px;
-    width:95%;
-    height:auto;
-    padding:10px;
-    border: 2px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-
-}
-.error .p-error{
-    text-align: center;
-    font-size: 26px;
-    color: red;
-}
-    </style>
+    <title>UBS Bank | Modifier l'État de la Transaction</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/css/admin-theme.css" rel="stylesheet">
+</head>
 
-    <div class="wrapper">
-        <form action="" method="post">
-            <h1>Entrez le code swift pour modifier l'etat</h1>
-            <div class="input-box">
-                <input type="password" placeholder="Ex:000-000-00" name="code" >
-            </div>
-            <input type="submit" name="send" value="Consulter" class="btn">
-
-        </form>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">U</div>
+            <div class="sidebar-title">UBS Bank</div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a href="../index.html" class="sidebar-menu-link">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Accueil</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="admin.php" class="sidebar-menu-link">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>Nouvelle Transaction</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="list.php" class="sidebar-menu-link">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Liste des Transactions</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="code.php" class="sidebar-menu-link">
+                    <i class="bi bi-search"></i>
+                    <span>Consulter Transaction</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="avancement1.php" class="sidebar-menu-link active">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <span>Modifier État</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="condition.php" class="sidebar-menu-link">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Modifier Condition</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <div id="preloader"></div>
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-  
-    <!-- Vendor JS Files -->
-    <script src="../assets/vendor/purecounter/purecounter_vanilla.js"></script>
-    <script src="../assets/vendor/aos/aos.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-    <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
-    <script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
-    <script src="../assets/vendor/php-email-form/validate.js"></script>
-  
-    <!-- Template Main JS File -->
-    <script src="../assets/js/main.js"></script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script>
-    
-      function googleTranslateElementInit(){
-        new google.translate.TranslateElement(
-          {pageLanguage:'fr'},
-          'google_translate_element'
-        );
-      }
-    </script>
+    <!-- Contenu Principal -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div>
+                <h1 class="page-title">Modifier l'État d'une Transaction</h1>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                    Entrez l'identifiant pour modifier la progression
+                </p>
+            </div>
+            <div class="top-bar-actions">
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="bi bi-sun-fill" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <?php if(isset($erreur)): ?>
+            <?php afficherErreur($erreur); ?>
+        <?php endif; ?>
+
+        <div class="card fade-in" style="max-width: 600px; margin: 2rem auto;">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="bi bi-arrow-repeat"></i> Rechercher une Transaction
+                </h2>
+            </div>
+            
+            <form action="" method="post">
+                <div class="form-group">
+                    <label class="form-label">Identifiant de la Transaction *</label>
+                    <input type="text" 
+                           name="code" 
+                           class="form-control" 
+                           placeholder="Ex: 123-456-789-012"
+                           style="text-align: center; font-family: monospace; font-size: 1.2rem; letter-spacing: 2px;"
+                           value="<?php echo isset($_POST['code']) ? securiser($_POST['code']) : ''; ?>"
+                           required>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                        <i class="bi bi-info-circle"></i> Format: XXX-XXX-XXX-XXX (12 chiffres)
+                    </small>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" name="send" class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                        Rechercher et Modifier
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="list.php" class="btn btn-sm" style="background: var(--bg-secondary); color: var(--text-primary);">
+                <i class="bi bi-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/theme.js"></script>
 </body>
 </html>
