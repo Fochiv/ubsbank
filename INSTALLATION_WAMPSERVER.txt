@@ -1,0 +1,73 @@
+==========================================
+INSTALLATION WAMPSERVER - UBS BANK
+==========================================
+
+CONFIGURATION UNIQUEMENT MYSQL/WAMPSERVER
+Projet prêt pour production locale
+
+ÉTAPE 1: DÉMARRER WAMPSERVER
+----------------------------
+1. Lancez WampServer
+2. Attendez l'icône VERTE (serveur actif)
+
+ÉTAPE 2: CRÉER LA BASE DE DONNÉES
+----------------------------------
+1. Ouvrez: http://localhost/phpmyadmin
+2. Cliquez "Nouvelle base de données"
+3. Nom: ubsbank
+4. Interclassement: utf8mb4_unicode_ci
+5. Cliquez "Créer"
+
+ÉTAPE 3: IMPORTER LA STRUCTURE
+-------------------------------
+1. Sélectionnez la base "ubsbank"
+2. Onglet "Importer"
+3. Fichier: php/all_for_one.sql (AVEC données de test)
+   OU: php/ubsbank_mysql.sql (base vide)
+4. Cliquez "Exécuter"
+
+ÉTAPE 4: COPIER LES FICHIERS
+----------------------------
+Placez le projet dans:
+C:\wamp64\www\ubsbank\
+
+ÉTAPE 5: ACCÉDER À L'APPLICATION
+---------------------------------
+http://localhost/ubsbank/php/admin.php (Ajouter)
+http://localhost/ubsbank/php/list.php (Liste)
+http://localhost/ubsbank/php/code.php (Consulter)
+
+CONFIGURATION AUTOMATIQUE
+--------------------------
+php/connect.php est déjà configuré:
+- Host: localhost
+- Database: ubsbank
+- User: root
+- Password: (vide)
+
+SYSTÈME D'IDENTIFIANTS
+-----------------------
+Colonne: code_swift
+Stockage: 12 chiffres (123456789012)
+Affichage: XXX-XXX-XXX-XXX (avec tirets)
+
+IMPORTANT
+---------
+✓ Projet MySQL uniquement (pas de SQLite)
+✓ Compatible WampServer par défaut
+✓ Identifiants générés automatiquement
+✓ Base prête pour production locale
+
+DÉPANNAGE
+---------
+Erreur connexion MySQL:
+→ Vérifiez WampServer actif (icône verte)
+→ Vérifiez base "ubsbank" créée
+→ Vérifiez SQL importé
+
+Page blanche:
+→ Activez display_errors dans php.ini
+→ Redémarrez Apache
+
+Pour plus de détails, consultez:
+README_WAMPSERVER.md

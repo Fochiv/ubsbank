@@ -94,7 +94,7 @@ if(isset($_POST['sendAd'])){
                 'im' => $important
             ));
             
-            $succes_message = 'Transaction ajoutée avec succès! Identifiant: <strong>' . formaterIdentifiant($identifiant) . '</strong>';
+            $succes_message = 'Transaction ajoutée avec succès! Identifiant: ' . formaterIdentifiant($identifiant);
             // Enregistrer dans la session pour affichage sur list.php
             session_start();
             $_SESSION['success'] = $succes_message;

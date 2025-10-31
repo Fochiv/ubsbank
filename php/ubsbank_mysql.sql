@@ -56,11 +56,11 @@ CREATE TABLE `all_for_one` (
   `code_guichet_de` varchar(100) NOT NULL,
   `numero_compte_de` varchar(100) NOT NULL,
   `code_bic_de` varchar(100) NOT NULL,
-  `identification_transaction` varchar(12) NOT NULL COMMENT 'Identifiant unique (12 chiffres uniquement)',
+  `code_swift` varchar(12) NOT NULL COMMENT 'Identifiant unique (12 chiffres uniquement)',
   `etat` varchar(50) NOT NULL DEFAULT '10' COMMENT 'État d avancement (0-100)',
   `important` text NOT NULL COMMENT 'Conditions et informations importantes',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `identification_transaction` (`identification_transaction`)
+  UNIQUE KEY `code_swift` (`code_swift`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
