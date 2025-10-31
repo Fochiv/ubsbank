@@ -189,9 +189,9 @@ foreach($transactions as $trans) {
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <strong style="color: var(--accent-primary); font-family: monospace;">
-                                        <?php echo formaterIdentifiant($trans['identification_transaction']); ?>
+                                        <?php echo formaterIdentifiant($trans['code_swift']); ?>
                                     </strong>
-                                    <button onclick="copyToClipboard('<?php echo formaterIdentifiant($trans['identification_transaction']); ?>')" 
+                                    <button onclick="copyToClipboard('<?php echo formaterIdentifiant($trans['code_swift']); ?>')" 
                                             class="btn btn-sm btn-icon" 
                                             style="padding: 0.25rem 0.5rem; background: transparent; border: 1px solid var(--accent-primary);"
                                             title="Copier l'identifiant">
@@ -218,12 +218,12 @@ foreach($transactions as $trans) {
                             <td><?php echo getBadgeEtat($trans['etat']); ?></td>
                             <td>
                                 <div style="display: flex; gap: 0.5rem;">
-                                    <button onclick="showDetailsModal('<?php echo $trans['identification_transaction']; ?>')" 
+                                    <button onclick="showDetailsModal('<?php echo $trans['code_swift']; ?>')" 
                                             class="btn btn-info btn-sm btn-icon" 
                                             title="Voir Détails (Popup)">
                                         <i class="bi bi-eye-fill"></i>
                                     </button>
-                                    <a href="details_transaction.php?id=<?php echo $trans['identification_transaction']; ?>" 
+                                    <a href="details_transaction.php?id=<?php echo $trans['code_swift']; ?>" 
                                        class="btn btn-info btn-sm btn-icon" 
                                        title="Détails (Page complète)">
                                         <i class="bi bi-box-arrow-up-right"></i>
@@ -233,7 +233,7 @@ foreach($transactions as $trans) {
                                        title="Modifier">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
-                                    <button onclick="confirmDelete('<?php echo $trans['identification_transaction']; ?>', '<?php echo securiser($trans['nom_de']); ?>', '<?php echo securiser($trans['prenom_de']); ?>')" 
+                                    <button onclick="confirmDelete('<?php echo $trans['code_swift']; ?>', '<?php echo securiser($trans['nom_de']); ?>', '<?php echo securiser($trans['prenom_de']); ?>')" 
                                             class="btn btn-danger btn-sm btn-icon" 
                                             title="Supprimer">
                                         <i class="bi bi-trash-fill"></i>
@@ -406,13 +406,13 @@ foreach($transactions as $trans) {
         
         // Fonction pour afficher les détails dans une modal
         function showDetailsModal(identifiant) {
-            const transaction = transactionsData.find(t => t.identification_transaction === identifiant);
+            const transaction = transactionsData.find(t => t.code_swift === identifiant);
             if (!transaction) return;
             
             const modal = document.getElementById('details-modal');
             const content = document.getElementById('details-modal-content');
             
-            const identifiantFormate = formatIdentifiant(transaction.identification_transaction);
+            const identifiantFormate = formatIdentifiant(transaction.code_swift);
             
             content.innerHTML = `
                 <div style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 1.5rem; text-align: center;">

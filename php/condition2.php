@@ -9,7 +9,7 @@ if(!isset($_GET['code']) || empty($_GET['code'])){
 
 $code = $_GET['code'];
 
-$req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
+$req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
 $req2->execute(['cs' => $code]);
 $rep2 = $req2->fetch();
 
@@ -21,11 +21,11 @@ if(!$rep2){
 if(isset($_POST['send'])){
     if(!empty($_POST['condition'])){
         $condition = $_POST['condition'];
-        $req = $bdd->prepare('UPDATE all_for_one SET important = :im WHERE identification_transaction = :cs');
+        $req = $bdd->prepare('UPDATE all_for_one SET important = :im WHERE code_swift = :cs');
         $req->execute(['im' => $condition, 'cs' => $code]);
         $succes = 'Conditions de la transaction mises à jour avec succès!';
         
-        $req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
+        $req2 = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
         $req2->execute(['cs' => $code]);
         $rep2 = $req2->fetch();
     } else {
@@ -103,7 +103,7 @@ if(isset($_POST['send'])){
             <div>
                 <h1 class="page-title">Modifier les Conditions</h1>
                 <p style="color: var(--text-secondary); margin-top: 0.5rem;">
-                    Modifiez les conditions de la transaction #<?php echo formaterIdentifiant($rep2['identification_transaction']); ?>
+                    Modifiez les conditions de la transaction #<?php echo formaterIdentifiant($rep2['code_swift']); ?>
                 </p>
             </div>
             <div class="top-bar-actions">
@@ -135,7 +135,7 @@ if(isset($_POST['send'])){
                         <i class="bi bi-hash"></i> Identifiant de la Transaction
                     </p>
                     <p style="font-weight: 700; font-size: 1.1rem; font-family: monospace; color: var(--accent-primary);">
-                        <?php echo formaterIdentifiant($rep2['identification_transaction']); ?>
+                        <?php echo formaterIdentifiant($rep2['code_swift']); ?>
                     </p>
                 </div>
                 

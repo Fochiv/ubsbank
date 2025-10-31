@@ -9,7 +9,7 @@ if(!isset($_GET['code']) || empty($_GET['code'])){
 
 $code = $_GET['code'];
 
-$req = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
+$req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
 $req->execute(['cs' => $code]);
 $transaction = $req->fetch();
 
@@ -109,7 +109,7 @@ if(!$transaction){
                         <i class="bi bi-hash"></i> Identifiant de la Transaction
                     </p>
                     <p style="font-weight: 700; font-size: 1.1rem; font-family: monospace; color: var(--accent-primary);">
-                        <?php echo formaterIdentifiant($transaction['identification_transaction']); ?>
+                        <?php echo formaterIdentifiant($transaction['code_swift']); ?>
                     </p>
                 </div>
                 

@@ -148,7 +148,7 @@ if(isset($_POST['update'])){
             <div>
                 <h1 class="page-title">Modifier Transaction</h1>
                 <p style="color: var(--text-secondary); margin-top: 0.5rem;">
-                    Identifiant: <strong><?php echo formaterIdentifiant($transaction['identification_transaction']); ?></strong>
+                    Identifiant: <strong><?php echo formaterIdentifiant($transaction['code_swift']); ?></strong>
                 </p>
             </div>
             <div class="top-bar-actions">

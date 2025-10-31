@@ -12,7 +12,7 @@ if(isset($_POST['send'])){
         if(empty($code_clean)){
             $erreur = 'L\'identifiant saisi n\'est pas valide. Veuillez entrer uniquement des chiffres.';
         } else {
-            $req = $bdd->prepare('SELECT * FROM all_for_one WHERE identification_transaction = :cs');
+            $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
             $req->execute(['cs' => $code_clean]);
             $user = $req->rowCount();
             
@@ -125,12 +125,12 @@ if(isset($_POST['send'])){
                     <input type="text" 
                            name="code" 
                            class="form-control" 
-                           placeholder="Ex: 257-016-34 ou 123-456-789-012"
+                           placeholder="Ex: 123-456-789-012"
                            style="text-align: center; font-family: monospace; font-size: 1.2rem; letter-spacing: 2px;"
                            value="<?php echo isset($_POST['code']) ? securiser($_POST['code']) : ''; ?>"
                            required>
                     <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
-                        <i class="bi bi-info-circle"></i> Format: XXX-XXX-XX (8 chiffres) ou XXX-XXX-XXX-XXX (12 chiffres)
+                        <i class="bi bi-info-circle"></i> Format: XXX-XXX-XXX-XXX (12 chiffres)
                     </small>
                 </div>
                 

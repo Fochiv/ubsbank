@@ -18,7 +18,7 @@ function genererIdentifiantTransaction($bdd) {
         }
         
         // Vérifier l'unicité dans la base de données
-        $req = $bdd->prepare('SELECT COUNT(*) as count FROM all_for_one WHERE identification_transaction = :id');
+        $req = $bdd->prepare('SELECT COUNT(*) as count FROM all_for_one WHERE code_swift = :id');
         $req->execute(['id' => $identifiant]);
         $result = $req->fetch();
         $existe = $result['count'] > 0;
