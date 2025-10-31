@@ -35,10 +35,17 @@ Application web PHP pour la gestion des transactions bancaires UBS. Système com
 - La base de données SQLite est committée dans le repository pour faciliter le déploiement
 
 ### Sur Wampserver (Production)
-1. Créer une base de données MySQL nommée `id21521172_ubsbank`
+**📘 Consultez le fichier WAMPSERVER.md pour le guide complet**
+
+Configuration rapide:
+1. Créer une base de données MySQL nommée `projet_facebook`
 2. Importer le fichier `php/all_for_one.sql`
-3. Modifier `php/connect.php` ou renommer `php/connect_mysql.php` en `php/connect.php`
-4. Ajuster les paramètres de connexion (host, user, password)
+3. Renommer `php/connect_mysql.php` en `php/connect.php` (ou modifier connect.php)
+4. Les identifiants MySQL sont déjà configurés:
+   - Host: localhost
+   - Database: projet_facebook
+   - User: root
+   - Password: (vide)
 
 ## 🔧 Fonctionnalités
 
