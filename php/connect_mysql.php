@@ -1,7 +1,7 @@
 <?php
 // Configuration MySQL pour Wampserver
 $host = 'localhost';
-$dbname = 'projet_facebook';
+$dbname = 'ubsbank';
 $username = 'root';
 $password = '';
 

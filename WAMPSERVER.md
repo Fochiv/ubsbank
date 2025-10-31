@@ -11,7 +11,7 @@
 ### Option A: Via phpMyAdmin (Recommandé)
 1. Ouvrez phpMyAdmin: `http://localhost/phpmyadmin`
 2. Cliquez sur "Nouvelle base de données" dans le panneau de gauche
-3. Nom de la base: **`projet_facebook`**
+3. Nom de la base: **`ubsbank`**
 4. Interclassement: **`utf8_unicode_ci`**
 5. Cliquez sur "Créer"
 
@@ -22,7 +22,7 @@
 4. Sélectionnez le fichier **`php/all_for_one.sql`**
 5. **IMPORTANT**: Avant d'importer, modifiez la ligne 21 du fichier SQL:
    - Remplacez: `CREATE DATABASE id21521172_ubsbank`
-   - Par: `CREATE DATABASE projet_facebook`
+   - Par: `CREATE DATABASE ubsbank`
 6. Cliquez sur "Exécuter"
 
 ---
@@ -85,7 +85,7 @@ try {
 
 ### Via phpMyAdmin
 1. Ouvrez phpMyAdmin
-2. Sélectionnez la base **`projet_facebook`** dans le panneau de gauche
+2. Sélectionnez la base **`ubsbank`** dans le panneau de gauche
 3. Cliquez sur l'onglet "SQL"
 4. Copiez-collez le contenu du fichier **`php/all_for_one.sql`** 
    - **SAUF** les 22 premières lignes (jusqu'à `CREATE TABLE`)
@@ -116,7 +116,7 @@ Cela importera **17 transactions de démonstration**.
 
 ### Test 2: Vérifier dans la Base de Données
 1. Ouvrez phpMyAdmin
-2. Base: `projet_facebook` → Table: `all_for_one`
+2. Base: `ubsbank` → Table: `all_for_one`
 3. Cliquez sur "Afficher" pour voir vos transactions
 
 ### Test 3: Consulter une Transaction
@@ -131,7 +131,7 @@ Cela importera **17 transactions de démonstration**.
 Vos paramètres actuels:
 ```
 Hôte: localhost
-Base de données: projet_facebook
+Base de données: ubsbank
 Utilisateur: root
 Mot de passe: (vide)
 ```
@@ -143,7 +143,7 @@ Si vous devez les modifier plus tard, éditez le fichier **`php/connect.php`**
 ## ❓ Dépannage
 
 ### Erreur: "Base de données introuvable"
-➡️ Vérifiez que la base `projet_facebook` existe dans phpMyAdmin
+➡️ Vérifiez que la base `ubsbank` existe dans phpMyAdmin
 
 ### Erreur: "Table all_for_one n'existe pas"
 ➡️ Importez le fichier SQL (voir Étape 1 ou 4)
