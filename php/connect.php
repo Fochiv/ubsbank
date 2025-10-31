@@ -20,7 +20,7 @@
         $bdd = new PDO('sqlite:' . $db_path);
         $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        // Créer la table si elle n'existe pas (avec le nouveau nom de colonne)
+        // Créer la table all_for_one avec contrainte d'unicité sur identification_transaction
         $bdd->exec("CREATE TABLE IF NOT EXISTS all_for_one (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nom_ex TEXT NOT NULL,
@@ -41,23 +41,10 @@
             code_guichet_de TEXT NOT NULL,
             numero_compte_de TEXT NOT NULL,
             code_bic_de TEXT NOT NULL,
-            identification_transaction TEXT NOT NULL,
+            identification_transaction TEXT NOT NULL UNIQUE,
             etat TEXT NOT NULL,
             important TEXT NOT NULL
         )");
-        
-        // Migration: Renommer code_swift en identification_transaction si nécessaire
-        // Cette migration s'exécute pour les bases de données existantes
-        try {
-            // Vérifier si la colonne code_swift existe encore
-            $check = $bdd->query("SELECT sql FROM sqlite_master WHERE type='table' AND name='all_for_one'")->fetch();
-            if ($check && strpos($check['sql'], 'code_swift') !== false) {
-                // Renommer code_swift en identification_transaction
-                $bdd->exec("ALTER TABLE all_for_one RENAME COLUMN code_swift TO identification_transaction");
-            }
-        } catch(Exception $e) {
-            // La colonne a déjà été renommée ou erreur (peut être ignorée)
-        }
         
     } catch(Exception $e) {
         die('Une erreur s\'est produite: '.$e->getMessage());

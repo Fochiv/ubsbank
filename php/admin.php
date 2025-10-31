@@ -99,8 +99,8 @@ if(isset($_POST['sendAd'])){
             session_start();
             $_SESSION['success'] = $succes_message;
             
-            // Afficher immédiatement le message de confirmation
-            $erreurs[] = ''; // Force l'affichage des messages
+            // Redirection automatique vers list.php après 2 secondes
+            header("refresh:2;url=list.php");
             $afficher_confirmation = true;
             
         } catch(Exception $e) {
@@ -316,5 +316,14 @@ if(isset($_POST['sendAd'])){
 
     <!-- JavaScript -->
     <script src="../assets/js/theme.js"></script>
+    
+    <?php if(isset($afficher_confirmation) && $afficher_confirmation): ?>
+    <script>
+        // Redirection automatique après 2 secondes
+        setTimeout(function() {
+            window.location.href = 'list.php';
+        }, 2000);
+    </script>
+    <?php endif; ?>
 </body>
 </html>

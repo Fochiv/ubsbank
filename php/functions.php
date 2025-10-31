@@ -30,23 +30,22 @@ function genererIdentifiantTransaction($bdd) {
 
 /**
  * Formate un identifiant pour l'affichage (avec tirets)
- * @param string $identifiant Identifiant brut
- * @return string Identifiant formaté
- * Format: XXX-XXX-XXX-XXX (12 chiffres) ou XXX-XXX-XX (8 chiffres - ancien format)
+ * @param string $identifiant Identifiant brut (12 chiffres)
+ * @return string Identifiant formaté XXX-XXX-XXX-XXX
  */
 function formaterIdentifiant($identifiant) {
-    $identifiant = str_replace('-', '', $identifiant);
+    // Nettoyer l'identifiant (enlever tous les tirets et espaces)
+    $identifiant = preg_replace('/[^0-9]/', '', $identifiant);
     
+    // Formater au format XXX-XXX-XXX-XXX (12 chiffres uniquement)
     if (strlen($identifiant) === 12) {
         return substr($identifiant, 0, 3) . '-' . 
                substr($identifiant, 3, 3) . '-' . 
                substr($identifiant, 6, 3) . '-' . 
                substr($identifiant, 9, 3);
-    } elseif (strlen($identifiant) === 8) {
-        return substr($identifiant, 0, 3) . '-' . 
-               substr($identifiant, 3, 3) . '-' . 
-               substr($identifiant, 6, 2);
     }
+    
+    // Si la longueur n'est pas 12, retourner tel quel
     return $identifiant;
 }
 
