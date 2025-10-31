@@ -187,9 +187,17 @@ foreach($transactions as $trans) {
                         <tr>
                             <td>#<?php echo securiser($trans['id']); ?></td>
                             <td>
-                                <strong style="color: var(--accent-primary); font-family: monospace;">
-                                    <?php echo formaterIdentifiant($trans['code_swift']); ?>
-                                </strong>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <strong style="color: var(--accent-primary); font-family: monospace;">
+                                        <?php echo formaterIdentifiant($trans['code_swift']); ?>
+                                    </strong>
+                                    <button onclick="copyToClipboard('<?php echo formaterIdentifiant($trans['code_swift']); ?>')" 
+                                            class="btn btn-sm btn-icon" 
+                                            style="padding: 0.25rem 0.5rem; background: transparent; border: 1px solid var(--accent-primary);"
+                                            title="Copier l'identifiant">
+                                        <i class="bi bi-clipboard" style="font-size: 0.9rem;"></i>
+                                    </button>
+                                </div>
                             </td>
                             <td>
                                 <?php echo securiser($trans['nom_ex']) . ' ' . securiser($trans['prenom_ex']); ?><br>
@@ -210,10 +218,15 @@ foreach($transactions as $trans) {
                             <td><?php echo getBadgeEtat($trans['etat']); ?></td>
                             <td>
                                 <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="showDetailsModal('<?php echo $trans['code_swift']; ?>')" 
+                                            class="btn btn-info btn-sm btn-icon" 
+                                            title="Voir Détails (Popup)">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>
                                     <a href="details_transaction.php?id=<?php echo $trans['code_swift']; ?>" 
                                        class="btn btn-info btn-sm btn-icon" 
-                                       title="Détails">
-                                        <i class="bi bi-eye-fill"></i>
+                                       title="Détails (Page complète)">
+                                        <i class="bi bi-box-arrow-up-right"></i>
                                     </a>
                                     <a href="edit_transaction.php?id=<?php echo $trans['id']; ?>" 
                                        class="btn btn-warning btn-sm btn-icon" 
@@ -240,6 +253,29 @@ foreach($transactions as $trans) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal des Détails de Transaction -->
+    <div class="modal-overlay" id="details-modal">
+        <div class="modal" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="bi bi-receipt-cutoff"></i>
+                    Détails de la Transaction
+                </h3>
+                <button onclick="closeDetailsModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary);">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="details-modal-content">
+                <!-- Le contenu sera chargé dynamiquement -->
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeDetailsModal()" class="btn btn-sm" style="background: var(--bg-secondary); color: var(--text-primary);">
+                    Fermer
+                </button>
             </div>
         </div>
     </div>
@@ -290,6 +326,85 @@ foreach($transactions as $trans) {
             });
         });
         
+        // Fonction pour copier dans le presse-papiers
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Identifiant copié : ' + text);
+            }).catch(function(err) {
+                console.error('Erreur lors de la copie : ', err);
+            });
+        }
+        
+        // Données des transactions (générées depuis PHP)
+        const transactionsData = <?php echo json_encode($transactions); ?>;
+        
+        // Fonction pour afficher les détails dans une modal
+        function showDetailsModal(identifiant) {
+            const transaction = transactionsData.find(t => t.code_swift === identifiant);
+            if (!transaction) return;
+            
+            const modal = document.getElementById('details-modal');
+            const content = document.getElementById('details-modal-content');
+            
+            const identifiantFormate = formatIdentifiant(transaction.code_swift);
+            
+            content.innerHTML = `
+                <div style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 1.5rem; text-align: center;">
+                    <h2 style="margin: 0 0 1rem 0; font-size: 1.3rem;">Identifiant de Transaction</h2>
+                    <div style="font-family: monospace; font-size: 2rem; font-weight: bold; letter-spacing: 3px; margin-bottom: 1rem;">
+                        ${identifiantFormate}
+                    </div>
+                    <button onclick="copyToClipboard('${identifiantFormate}')" class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white;">
+                        <i class="bi bi-clipboard"></i> Copier l'identifiant
+                    </button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 10px;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--accent-primary);"><i class="bi bi-cash-stack"></i> Montant</h4>
+                        <p style="font-size: 1.5rem; font-weight: bold; margin: 0;">${Number(transaction.montant).toLocaleString()} ${transaction.devise_compte_ex}</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 10px;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--accent-info);"><i class="bi bi-calendar-check"></i> Date</h4>
+                        <p style="font-size: 1.2rem; margin: 0;">${new Date(transaction.date).toLocaleDateString('fr-FR')}</p>
+                        <small style="color: var(--text-secondary);">${transaction.heure}</small>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 10px;">
+                        <h4 style="margin: 0 0 1rem 0; color: var(--text-primary);"><i class="bi bi-person-circle"></i> Expéditeur</h4>
+                        <p style="margin: 0.5rem 0;"><strong>Nom:</strong> ${transaction.nom_ex} ${transaction.prenom_ex}</p>
+                        <p style="margin: 0.5rem 0;"><strong>Pays:</strong> ${transaction.pays_ex}</p>
+                        <p style="margin: 0.5rem 0;"><strong>Banque:</strong> ${transaction.nom_banque_ex}</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 10px;">
+                        <h4 style="margin: 0 0 1rem 0; color: var(--text-primary);"><i class="bi bi-person-check-fill"></i> Destinataire</h4>
+                        <p style="margin: 0.5rem 0;"><strong>Nom:</strong> ${transaction.nom_de} ${transaction.prenom_de}</p>
+                        <p style="margin: 0.5rem 0;"><strong>Pays:</strong> ${transaction.pays_de}</p>
+                        <p style="margin: 0.5rem 0;"><strong>Email:</strong> ${transaction.email_de}</p>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(245, 158, 11, 0.1); border: 2px solid var(--accent-warning); padding: 1rem; border-radius: 10px; margin-top: 1.5rem;">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--accent-warning);"><i class="bi bi-exclamation-triangle-fill"></i> État: ${transaction.etat}%</h4>
+                    <div style="background: var(--bg-secondary); border-radius: 20px; height: 30px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent-success), var(--accent-info)); height: 100%; width: ${transaction.etat}%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; transition: width 0.3s;">
+                            ${transaction.etat}%
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+        
+        // Fonction pour fermer le modal de détails
+        function closeDetailsModal() {
+            const modal = document.getElementById('details-modal');
+            modal.style.display = 'none';
+        }
+        
         // Variables pour le modal de suppression
         let deleteIdentifiant = '';
         
@@ -326,18 +441,24 @@ foreach($transactions as $trans) {
             return id;
         }
         
-        // Fermer le modal en cliquant à l'extérieur
+        // Fermer les modals en cliquant à l'extérieur
         window.addEventListener('click', function(e) {
-            const modal = document.getElementById('delete-modal');
-            if (e.target === modal) {
+            const deleteModal = document.getElementById('delete-modal');
+            const detailsModal = document.getElementById('details-modal');
+            
+            if (e.target === deleteModal) {
                 closeModal();
+            }
+            if (e.target === detailsModal) {
+                closeDetailsModal();
             }
         });
         
-        // Fermer le modal avec la touche Échap
+        // Fermer les modals avec la touche Échap
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();
+                closeDetailsModal();
             }
         });
     </script>
