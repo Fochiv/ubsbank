@@ -31,8 +31,8 @@ Application web PHP pour la gestion des transactions bancaires UBS. Système com
 - **Base de données**: SQLite (php/database/ubsbank.db)
 - **Serveur**: PHP 8.2 sur port 5000
 - **Fichier de connexion**: php/connect.php
-- **Données pré-chargées**: 17 transactions déjà dans la base (committée avec le projet)
-- La base de données SQLite est committée dans le repository pour faciliter le déploiement
+- **État initial**: Base de données vide (aucune transaction pré-chargée)
+- La table est créée automatiquement au premier lancement
 
 ### Sur Wampserver (Production)
 **📘 Consultez le fichier INSTALLATION_WAMPSERVER.md pour le guide complet**
@@ -76,13 +76,19 @@ Configuration rapide:
 ⚠️ **Note importante**: La colonne s'appelle maintenant `identification_transaction` au lieu de `code_swift`
 
 ### Identifiants de Transaction
-**Nouveaux identifiants**: 12 chiffres (format: XXX-XXX-XXX-XXX)
+**Format unique**: 12 chiffres (format: XXX-XXX-XXX-XXX)
 - Exemple: 123-456-789-012
+- Exemple: 984-324-051-550
 
-**Anciens identifiants**: 8 chiffres (format: XXX-XXX-XX) 
-- Exemple: 257-016-34
+**Caractéristiques**:
+- Génération aléatoire de 12 chiffres
+- Vérification d'unicité automatique
+- Stockage sans tirets dans la base de données
+- Formatage automatique avec tirets pour l'affichage
+- Contrainte UNIQUE au niveau de la base de données
 
-Les deux formats sont supportés. Les identifiants sont stockés sans tirets dans la base de données et formatés automatiquement pour l'affichage. Le système nettoie automatiquement tous les espaces, tirets et caractères spéciaux lors de la recherche.
+**Nettoyage intelligent**:
+Le système nettoie automatiquement tous les espaces, tirets et caractères spéciaux lors de la recherche, donc vous pouvez copier-coller l'identifiant avec ou sans tirets.
 
 ## 🔐 Sécurité
 
@@ -102,13 +108,12 @@ Les deux formats sont supportés. Les identifiants sont stockés sans tirets dan
 
 ### Changements Récents (31 Oct 2025)
 
-#### Configuration initiale
+#### Configuration initiale (matin)
 - Migration vers Replit avec SQLite pour l'environnement de développement
 - Compatibilité Wampserver via MySQL (nom BD: ubsbank)
-- Import des 17 transactions existantes (format 8 chiffres)
 - Configuration du serveur PHP sur port 5000
 
-#### Corrections de bugs (31 Oct 2025 - après-midi)
+#### Corrections de bugs (après-midi)
 - **BUG RÉSOLU**: Erreur "Cet identifiant ne correspond à aucune transaction"
   - Cause: Espaces invisibles lors du copier-coller
   - Solution: Nettoyage avancé avec `preg_replace('/[^0-9]/', '', trim($code))`
@@ -123,10 +128,27 @@ Les deux formats sont supportés. Les identifiants sont stockés sans tirets dan
   - Affichage immédiat de l'identifiant généré dans admin.php
   - Message persistant dans list.php via sessions
 
+#### Refonte complète de la base de données (soir)
+- **NOUVELLE BASE PROPRE**: Suppression de toutes les données existantes
+  - Base de données recréée sans aucune donnée
+  - Colonne `identification_transaction` avec contrainte UNIQUE
+  - Identifiants UNIQUEMENT 12 chiffres (format: XXX-XXX-XXX-XXX)
+  - Plus de support de l'ancien format 8 chiffres
+
+- **GÉNÉRATION D'IDENTIFIANTS**: Système aléatoire robuste
+  - Génération aléatoire de 12 chiffres
+  - Vérification automatique d'unicité avant attribution
+  - Pas de collision possible (validation dans la base)
+
+- **REDIRECTION AUTOMATIQUE**: Amélioration UX
+  - Après ajout de transaction, message de confirmation pendant 2 secondes
+  - Redirection automatique vers la liste des transactions
+  - Meilleure expérience utilisateur
+
 #### Documentation
 - Création de INSTALLATION_WAMPSERVER.md avec guide complet
-- Page de diagnostic ajoutée: php/diagnostic.php
-- Support des deux formats d'identifiants (8 et 12 chiffres)
+- Nouveau fichier SQL propre: `php/ubsbank_mysql.sql` (DROP TABLE + CREATE)
+- Suppression du support des anciens formats d'identifiants
 - Notification élégante lors de la copie d'identifiant
 
 ### Compatibilité
