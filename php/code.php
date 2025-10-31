@@ -1,167 +1,150 @@
 <?php
-    function error($msg){
-        ?>
-            <div class="error">
-                <p class="p-error"><?php echo $msg ?></p>
-            </div>
-        <?php
-    }
-?>
-<?php
 require_once("connect.php");
+require_once("functions.php");
+
 if(isset($_POST['send'])){
     if(!empty($_POST['code'])){
-        $req=$bdd->prepare('SELECT * FROM all_for_one WHERE code_swift=:cs');
-        $req->execute(array('cs'=>$_POST['code']));
-        $code=$_POST['code'];
-        $user=$req->rowCount();
-        if($user==1){
-            header("location:info.php?code=".$code);
-        } else error('ce code swift ne renvoi aucune transaction !veuillez contacter votre agence ou votre banquier');
-
-    }else error('veuillez entrer le code swift de la transaction a consulter');
+        $code = trim($_POST['code']);
+        
+        // Enlever les tirets si présents (pour la recherche)
+        $code_clean = str_replace('-', '', $code);
+        
+        $req = $bdd->prepare('SELECT * FROM all_for_one WHERE code_swift = :cs');
+        $req->execute(['cs' => $code_clean]);
+        $user = $req->rowCount();
+        
+        if($user == 1){
+            header("location:info.php?code=".$code_clean);
+            exit;
+        } else {
+            $erreur = 'Cet identifiant de transaction ne correspond à aucune transaction! Veuillez contacter votre agence ou votre banquier.';
+        }
+    } else {
+        $erreur = 'Veuillez entrer l\'identifiant de la transaction à consulter';
+    }
 }
-
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
- 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-    <title>UBS bank|Entrer le code swift</title>
+    <title>UBS Bank | Consulter une Transaction</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/css/admin-theme.css" rel="stylesheet">
+    
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .consultation-card {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .consultation-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .consultation-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .consultation-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            margin-top: 2rem;
+            display: inline-block;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-   
-    <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: roboto,sans-serif;
-}
-body{
-    display:flex;
-    justify-content: center;
-    align-items:center;
-    min-height:100vh;
-    background: url(../assets/img/hero-bg.jpg);
-    background-size: cover;
-    background-position: center;
-}
-.wrapper{
-    width:420px;
-    background:transparent;
-    color: #fff;
-    border: 2px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    border-radius: 10px;
-    padding:30px 40px;
-
-}
-.wrapper h1{
-    font-size: 36px;
-    text-align: center;
-}
-.wrapper .input-box{
-    width:100%;
-    height: 50px;
-    /* background-color: salmon; */
-    margin:30px 0;
-}
-.input-box input{
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border:none;
-    outline:none;
-    border:2px solid rgba(255,255,255,0.2);
-    border-radius: 40px;
-    font-size: 16px;
-    color: #fff ;
-    padding:20px 45px 20px 20px;
-    text-align: center;
-}
-.input-box input::placeholder{
-    color:#fff;
-}
-.wrapper input[type="submit"]{
-    width:95%;
-    height:45px;
-    background-color: #fff;
-    border:none;
-    outline:none;
-    border-radius: 40px;
-    margin:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
-    cursor:pointer;
-    font-size: 16px;
-    color:#333;
-    font-weight: 600;
-   
-
-}
-.error{
-    position: absolute;
-    top:10px;
-    width:95%;
-    height:auto;
-    padding:10px;
-    border: 2px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-
-}
-.error .p-error{
-    text-align: center;
-    font-size: 26px;
-    color: red;
-}
-    </style>
-    
-
-    <div class="wrapper">
-          
-        <form action="" method="post">
-            <h1>Entrez le code swift</h1>
-            <div class="input-box">
-                <input type="password" placeholder="Ex:000-000-00" name="code" >
-            </div>
-            <input type="submit" name="send" value="Consulter" class="btn">
-
-        </form>
+    <div class="top-bar-actions" style="position: fixed; top: 2rem; right: 2rem;">
+        <button class="theme-toggle" id="theme-toggle">
+            <i class="bi bi-sun-fill" id="theme-icon"></i>
+        </button>
     </div>
 
-    <div id="preloader"></div>
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-  
-    <!-- Vendor JS Files -->
-    <script src="../assets/vendor/purecounter/purecounter_vanilla.js"></script>
-    <script src="../assets/vendor/aos/aos.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-    <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
-    <script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
-    <script src="../assets/vendor/php-email-form/validate.js"></script>
-  
-    <!-- Template Main JS File -->
-    <script src="../assets/js/main.js"></script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script>
-    
-      function googleTranslateElementInit(){
-        new google.translate.TranslateElement(
-          {pageLanguage:'fr'},
-          'google_translate_element'
-        );
-      }
-    </script>
+    <div class="consultation-card fade-in">
+        <div class="consultation-icon">
+            <i class="bi bi-search"></i>
+        </div>
+        
+        <h1 class="consultation-title">Consulter une Transaction</h1>
+        
+        <p class="consultation-description">
+            Entrez l'identifiant de votre transaction pour consulter son statut et les détails complets.
+        </p>
+
+        <?php if(isset($erreur)): ?>
+            <?php afficherErreur($erreur); ?>
+        <?php endif; ?>
+
+        <form action="" method="post">
+            <div class="form-group">
+                <label class="form-label" style="text-align: left;">Identifiant de la Transaction</label>
+                <input type="text" 
+                       name="code" 
+                       class="form-control" 
+                       placeholder="Ex: 123-456-789-012" 
+                       style="text-align: center; font-family: monospace; font-size: 1.2rem; letter-spacing: 2px;"
+                       value="<?php echo isset($_POST['code']) ? securiser($_POST['code']) : ''; ?>"
+                       required>
+                <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                    <i class="bi bi-info-circle"></i> Format: XXX-XXX-XXX-XXX (12 chiffres)
+                </small>
+            </div>
+            
+            <button type="submit" name="send" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                <i class="bi bi-search"></i>
+                Consulter
+            </button>
+        </form>
+
+        <a href="../index.html" class="back-link">
+            <i class="bi bi-arrow-left"></i> Retour à l'accueil
+        </a>
+    </div>
+
+    <script src="../assets/js/theme.js"></script>
 </body>
 </html>

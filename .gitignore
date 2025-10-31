@@ -1,0 +1,25 @@
+# Base de données SQLite
+php/database/*.db
+php/database/*.db-journal
+
+# Logs PHP
+*.log
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires
+*.tmp
+*.temp
+*~
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environnement
+.env
+.env.local
