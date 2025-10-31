@@ -95,12 +95,6 @@ if(isset($_POST['sendAd'])){
             ));
             
             $succes_message = 'Transaction ajoutée avec succès! Identifiant: ' . formaterIdentifiant($identifiant);
-            // Enregistrer dans la session pour affichage sur list.php
-            session_start();
-            $_SESSION['success'] = $succes_message;
-            
-            // Redirection automatique vers list.php après 2 secondes
-            header("refresh:2;url=list.php");
             $afficher_confirmation = true;
             
         } catch(Exception $e) {
