@@ -20,7 +20,7 @@
         $bdd = new PDO('sqlite:' . $db_path);
         $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        // Créer la table all_for_one avec contrainte d'unicité sur identification_transaction
+        // Créer la table all_for_one avec contrainte d'unicité sur code_swift
         $bdd->exec("CREATE TABLE IF NOT EXISTS all_for_one (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nom_ex TEXT NOT NULL,
@@ -41,7 +41,7 @@
             code_guichet_de TEXT NOT NULL,
             numero_compte_de TEXT NOT NULL,
             code_bic_de TEXT NOT NULL,
-            identification_transaction TEXT NOT NULL UNIQUE,
+            code_swift TEXT NOT NULL UNIQUE,
             etat TEXT NOT NULL,
             important TEXT NOT NULL
         )");
